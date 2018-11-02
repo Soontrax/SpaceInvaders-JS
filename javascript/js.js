@@ -1,49 +1,74 @@
 window.onload = function () {
-    var canvas = document.getElementById("canvas");
+    var myGamePiece;
 
-    var ctx = canvas.getContext("2d");
-    var sound = document.getElementById("sound");
-    sound.play();
-
-    var icon = new Image();
-    icon.src = 'img/nave-retro.png';
-    ctx.drawImage(icon, 530, 400, 150, 100);
-
-    startGameLoop();
-
-    function startGameLoop(){
-        setInterval(function(){
-            drawScreen();
-            drawShip();
-        }, 16);
-        window.addEventListener('keydown',movement(), true);
+    function startGame() {
+        myGameArea.start();
+        myGamePiece = new component(150, 150, "img/nave-retro.png", 450, 390, "image");
     }
 
-    //function drawScreen() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#aaaaaa';
-        ctx.rect(0, 0, canvas.width, canvas.height);
-        ctx.fill();
-    //}
-
-    function drawShip(){
-        ctx.drawImage(icon, x, y, 200, 103);
+    var myGameArea = {
+        canvas: document.createElement("canvas"),
+        start: function () {
+            this.canvas.width = 1000;
+            this.canvas.height = 500;
+            this.context = this.canvas.getContext("2d");
+            document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+            this.interval = setInterval(updateGameArea, 20);
+            window.addEventListener('keydown', function (e) {
+                myGameArea.key = e.keyCode;
+            })
+            window.addEventListener('keyup', function (e) {
+                myGameArea.key = false;
+            })
+        },
+        clear: function () {
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
     }
 
-    function movement(event) {
-            if (event.keyCode == 37) {
-                icon = x-=15;
+    function component(width, height, route, x, y, type) {
+        this.type = type;
+        if (type == "image") {
+            this.image = new Image();
+            this.image.src = route;
+        }
+        this.width = width;
+        this.height = height;
+        this.speedX = 0;
+        this.speedY = 0;    
+        this.x = x;
+        this.y = y;    
+        this.update = function() {
+            ctx = myGameArea.context;
+            if (type == "image") {
+                ctx.drawImage(this.image, 
+                    this.x, 
+                    this.y,
+                    this.width, this.height);
+            } else {
+                ctx.fillStyle = route;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
             }
-            if (event.keyCode == 39) {
-                icon = x+=15;
-            }
-            if (event.keyCode == 38) {
-                icon = y-=15;
-            }
-            if (event.keyCode == 40) {
-                icon = y+=15;
-            }
+        }
+        this.newPos = function() {
+            this.x += this.speedX;
+            this.y += this.speedY;        
+        }
     }
+
+    function updateGameArea() {
+        myGameArea.clear();
+        myGamePiece.speedX = 0;
+        myGamePiece.speedY = 0;
+        if (myGameArea.key && myGameArea.key == 37) { myGamePiece.speedX = -5; }
+        if (myGameArea.key && myGameArea.key == 39) { myGamePiece.speedX = 5; }
+        if (myGameArea.key && myGameArea.key == 38) { myGamePiece.speedY = -5; }
+        if (myGameArea.key && myGameArea.key == 40) { myGamePiece.speedY = 5; }
+        myGamePiece.newPos();
+        myGamePiece.update();
+    }
+
+    startGame();
 
 
     //https://codereview.stackexchange.com/questions/173327/space-invaders-like-game-in-javascript
