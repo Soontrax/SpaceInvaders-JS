@@ -20,6 +20,7 @@ const ENEMIES_PER_ROW = 10;
 const ENEMIES_HORIZONTAL_PADDING = 80;
 const ENEMIES_VERTICAL_PADDING = 70;
 const ENEMIES_VERTICAL_SPACING = 80;
+const ENEMY_COOLDOWN = 2.0;
 
 /*window.onload = function () {
     audio = new Audio();
@@ -62,7 +63,8 @@ const GAME_STATE = {
     playerY: 0,
     playerCooldown: 0,
     lasers: [],
-    enemies: []
+    enemies: [],
+    enemyLasers: [],
 };
 
 function rectsIntersect(r1, r2) {
@@ -97,6 +99,7 @@ function updateGAME() {
     updatePlayer($container, dt);
     updateLasers($container, dt);
     updateEnemies($container, dt);
+    updateEnemyLasers($container, dt);
     GAME_STATE.lastTime = currentime;
     window.requestAnimationFrame(updateGAME);
 }
@@ -138,6 +141,11 @@ function updateEnemies($container, dt) {
         const x = enemy.x + dx;
         const y = enemy.y + dy;
         setPosition(enemy.$element, x, y);
+        enemy.cooldown -= dt;
+        if (enemy.cooldown <= 0) {
+            createEnemyLaser($container, x, y);
+            enemy.cooldown = ENEMY_COOLDOWN;
+        }
 
     }
     GAME_STATE.enemies = GAME_STATE.enemies.filter(e => !e.isDead);
@@ -175,6 +183,19 @@ function updatePlayer($container, dt) {
     setPosition($player, GAME_STATE.playerX, GAME_STATE.playerY);
 }
 
+function updateEnemyLasers($container, dt) {
+    const lasers = GAME_STATE.enemyLasers;
+    for (let i = 0; i < lasers.length; i++) {
+        const laser = lasers[i];
+        laser.y += dt * LASER_MAX_SPEED;
+        if (laser.y > GAME_HEIGHT) {
+            destroyLaser($container, laser);
+        }
+        setPosition(laser.$element, laser.x, laser.y);
+    }
+    GAME_STATE.enemyLasers = GAME_STATE.enemyLasers.filter(e => !e.isDead);
+}
+
 //This Funcition is used for the ship can't exceed the limits
 function LIMITS(limit, min, max) {
     if (limit < min) {
@@ -204,6 +225,16 @@ function createPlayer($container) {
     setPosition($player, GAME_STATE.playerX, GAME_STATE.playerY);
 }
 
+function createEnemyLaser($container, x, y) {
+    const $element = document.createElement("img");
+    $element.src = "img/laser-red-5.png";
+    $element.className = "enemy-laser";
+    $container.appendChild($element);
+    const laser = { x, y, $element };
+    GAME_STATE.enemyLasers.push(laser);
+    setPosition($element, x, y);
+}
+
 function createLaser($container, x, y) {
     const $element = document.createElement("img");
     $element.src = "img/laser-blue-1.png";
@@ -224,6 +255,7 @@ function createEnemy($container, x, y) {
     const enemy = {
         x,
         y,
+        cooldown: ENEMY_COOLDOWN,
         $element
     };
     GAME_STATE.enemies.push(enemy);
