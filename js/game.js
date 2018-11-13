@@ -20,18 +20,21 @@ const ENEMIES_PER_ROW = 10;
 const ENEMIES_HORIZONTAL_PADDING = 80;
 const ENEMIES_VERTICAL_PADDING = 70;
 const ENEMIES_VERTICAL_SPACING = 80;
-const ENEMY_COOLDOWN = 2.0;
+const ENEMY_COOLDOWN = 5.0;
 
 /*window.onload = function () {
     audio = new Audio();
     audio.src = "audio/music.mp3";
     audio.loop = true;
-    audio.play();
+    audio.stop();
     mutebutton = document.getElementById("mute");
     closebutton = document.getElementById("close");
+    configurationbutton = document.getElementById("ajustes");
 
     mutebutton.addEventListener("click", muteMusic);
-    document.getElementById("close").onclick = function () { closeWindow() };
+    closebutton.addEventListener("click", closeWindow);
+    configurationbutton.addEventListener("click", showConfiguration);
+    
 
     function muteMusic() {
         if (audio.muted) {
@@ -50,6 +53,10 @@ const ENEMY_COOLDOWN = 2.0;
             document.getElementById("configuration").style.display = "none";
         }
     }
+
+    function showConfiguration(){
+        document.getElementById("configuration").style.display="block";
+    }
 }*/
 
 
@@ -65,6 +72,7 @@ const GAME_STATE = {
     lasers: [],
     enemies: [],
     enemyLasers: [],
+    gameOver: false
 };
 
 function rectsIntersect(r1, r2) {
@@ -91,11 +99,32 @@ function main() {
     }
 }
 
+function random(min,max) {
+    if (min == undefined) {
+        min = 0;
+    }
+
+    if (max == undefined) {
+        max = 1;
+    }
+    return min + Math.random() * (max-min);
+}
+
 //This is a recursivity method that call and check every frame in the game and we use that method for check every component in the game
 function updateGAME() {
     const $container = document.querySelector(".game");
     const currentime = Date.now();
     const dt = (currentime - GAME_STATE.lastTime) / 1000;
+    if (GAME_STATE.gameOver) {
+        document.querySelector(".game-over").style.display="block";
+        return;
+
+    }
+
+    if (playerHasWon()) {
+        document.querySelector(".congratulations").style.display="block";
+        return;
+    }
     updatePlayer($container, dt);
     updateLasers($container, dt);
     updateEnemies($container, dt);
@@ -179,8 +208,8 @@ function updatePlayer($container, dt) {
     }
 
     GAME_STATE.playerX = LIMITS(GAME_STATE.playerX, PLAYER_WIDTH, GAME_WIDTH - PLAYER_WIDTH);
-    const $player = document.querySelector(".player");
-    setPosition($player, GAME_STATE.playerX, GAME_STATE.playerY);
+    const player = document.querySelector(".player");
+    setPosition(player, GAME_STATE.playerX, GAME_STATE.playerY);
 }
 
 function updateEnemyLasers($container, dt) {
@@ -192,6 +221,14 @@ function updateEnemyLasers($container, dt) {
             destroyLaser($container, laser);
         }
         setPosition(laser.$element, laser.x, laser.y);
+        const r1 = laser.$element.getBoundingClientRect();
+        const player = document.querySelector(".player");
+        const r2 = player.getBoundingClientRect();
+        if (rectsIntersect(r1, r2)) {
+            //Player was hit
+            destroyPlayer($container, player);
+            break;
+        }
     }
     GAME_STATE.enemyLasers = GAME_STATE.enemyLasers.filter(e => !e.isDead);
 }
@@ -208,9 +245,9 @@ function LIMITS(limit, min, max) {
     }
 }
 
-function setPosition($el, x, y) {
+function setPosition(el, x, y) {
     //This method is for situate the position of the ship basically
-    $el.style.transform = `translate(${x}px, ${y}px)`;
+    el.style.transform = `translate(${x}px, ${y}px)`;
 }
 
 //CREATIONS
@@ -223,6 +260,17 @@ function createPlayer($container) {
     $player.className = "player";
     $container.appendChild($player);
     setPosition($player, GAME_STATE.playerX, GAME_STATE.playerY);
+}
+
+function destroyPlayer($container, player) {
+    $container.removeChild(player);
+    GAME_STATE.gameOver = true;
+    const audio = new Audio("sound/sfx-lose.ogg");
+    audio.play();
+}
+
+function playerHasWon(params) {
+    return GAME_STATE.enemies.length === 0;
 }
 
 function createEnemyLaser($container, x, y) {
@@ -255,7 +303,7 @@ function createEnemy($container, x, y) {
     const enemy = {
         x,
         y,
-        cooldown: ENEMY_COOLDOWN,
+        cooldown: random(0.5, ENEMY_COOLDOWN),
         $element
     };
     GAME_STATE.enemies.push(enemy);
