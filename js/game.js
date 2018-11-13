@@ -58,8 +58,6 @@ window.onload = function () {
 
 }
 
-
-
 const GAME_STATE = {
     lastTime: Date.now(),
     leftPressed: false,
