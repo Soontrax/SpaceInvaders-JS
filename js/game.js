@@ -22,44 +22,7 @@ const ENEMIES_VERTICAL_PADDING = 70;
 const ENEMIES_VERTICAL_SPACING = 80;
 const ENEMY_COOLDOWN = 5.0;
 
-/*window.onload = function () {
-    audio = new Audio();
-    audio.src = "audio/music.mp3";
-    audio.loop = true;
-    audio.stop();
-    mutebutton = document.getElementById("mute");
-    closebutton = document.getElementById("close");
-    configurationbutton = document.getElementById("ajustes");
-
-    mutebutton.addEventListener("click", muteMusic);
-    closebutton.addEventListener("click", closeWindow);
-    configurationbutton.addEventListener("click", showConfiguration);
-    
-
-    function muteMusic() {
-        if (audio.muted) {
-            audio.muted = false;
-            mutebutton.style.background = "url(img/icon-voice.png) no-repeat";
-        } else {
-            audio.muted = true;
-            mutebutton.style.background = "url(img/icon-mute.png) no-repeat";
-        }
-    }
-
-    var verification = true;
-    function closeWindow() {
-        alert("hola");
-        if (verification == true) {
-            document.getElementById("configuration").style.display = "none";
-        }
-    }
-
-    function showConfiguration(){
-        document.getElementById("configuration").style.display="block";
-    }
-}*/
-
-
+//Functionalities for configurations
 
 const GAME_STATE = {
     lastTime: Date.now(),
@@ -84,6 +47,38 @@ function rectsIntersect(r1, r2) {
 }
 
 function main() {
+    //Audio
+    audio = new Audio();
+    audio.src = "audio/music.mp3";
+    audio.play();
+    mutebutton = document.getElementById("mute");
+    closebutton = document.getElementById("close");
+    configurationbutton = document.getElementById("conf");
+
+    mutebutton.addEventListener("click", muteMusic);
+    closebutton.addEventListener("click", closeWindow);
+    configurationbutton.addEventListener("click", showConfiguration);
+
+    function muteMusic() {
+        if (audio.muted) {
+            audio.muted = false;
+            mutebutton.style.background = "url(img/icon-voice.png) no-repeat";
+        } else {
+            audio.muted = true;
+            mutebutton.style.background = "url(img/icon-mute.png) no-repeat";
+        }
+    }
+    var verification = 1;
+    function closeWindow() {
+        if (verification == 1) {
+            document.getElementById("configuration").style.display = "none";
+        }
+    }
+
+    function showConfiguration() {
+        document.getElementById("configuration").style.display = "block";
+    }
+    //Audio
     const $container = document.querySelector(".game");
     createPlayer($container);
 
@@ -99,7 +94,7 @@ function main() {
     }
 }
 
-function random(min,max) {
+function random(min, max) {
     if (min == undefined) {
         min = 0;
     }
@@ -107,7 +102,7 @@ function random(min,max) {
     if (max == undefined) {
         max = 1;
     }
-    return min + Math.random() * (max-min);
+    return min + Math.random() * (max - min);
 }
 
 //This is a recursivity method that call and check every frame in the game and we use that method for check every component in the game
@@ -116,13 +111,12 @@ function updateGAME() {
     const currentime = Date.now();
     const dt = (currentime - GAME_STATE.lastTime) / 1000;
     if (GAME_STATE.gameOver) {
-        document.querySelector(".game-over").style.display="block";
+        document.querySelector(".game-over").style.display = "block";
         return;
-
     }
 
     if (playerHasWon()) {
-        document.querySelector(".congratulations").style.display="block";
+        document.querySelector(".congratulations").style.display = "block";
         return;
     }
     updatePlayer($container, dt);
@@ -132,6 +126,7 @@ function updateGAME() {
     GAME_STATE.lastTime = currentime;
     window.requestAnimationFrame(updateGAME);
 }
+
 
 function updateLasers($container, dt) {
     const lasers = GAME_STATE.lasers;
