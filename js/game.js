@@ -9,18 +9,20 @@ const GAME_HEIGHT = 600;
 
 //CONSTANT POSITION OF THE PLAYER TO PREVENT THE USER CANT EXCEED THE LIMIT OF THE WIDTH OF THE SCREEN
 const PLAYER_WIDTH = 20;
-const PLAYER_MAX_SPEED = 300;
+const PLAYER_MAX_SPEED = 800;
 
-const LASER_MAX_SPEED = 300;
+const LASER_MAX_SPEED = 800;
 //With this paramentre we can change the velocity of shoot
-const LASER_COOLDOWN = 0.5;
+const LASER_COOLDOWN = 0.1;
 
 //This part is for the enemies
 const ENEMIES_PER_ROW = 10;
 const ENEMIES_HORIZONTAL_PADDING = 80;
 const ENEMIES_VERTICAL_PADDING = 70;
 const ENEMIES_VERTICAL_SPACING = 80;
-const ENEMY_COOLDOWN = 5.0;
+const ENEMY_COOLDOWN = 4.0;
+
+var enemyHit = 0;
 
 //Functionalities for configurations
 
@@ -35,8 +37,12 @@ const GAME_STATE = {
     lasers: [],
     enemies: [],
     enemyLasers: [],
-    gameOver: false
+    gameOver: false,
 };
+
+const audioMenu = new Audio();
+audioMenu.src = "audio/music.mp3";
+audioMenu.play();
 
 function rectsIntersect(r1, r2) {
     return !(r2.left > r1.right ||
@@ -47,10 +53,6 @@ function rectsIntersect(r1, r2) {
 }
 
 function main() {
-    //Audio
-    audio = new Audio();
-    audio.src = "audio/music.mp3";
-    audio.play();
     mutebutton = document.getElementById("mute");
     closebutton = document.getElementById("close");
     configurationbutton = document.getElementById("conf");
@@ -98,7 +100,6 @@ function random(min, max) {
     if (min == undefined) {
         min = 0;
     }
-
     if (max == undefined) {
         max = 1;
     }
@@ -112,13 +113,16 @@ function updateGAME() {
     const dt = (currentime - GAME_STATE.lastTime) / 1000;
     if (GAME_STATE.gameOver) {
         document.querySelector(".game-over").style.display = "block";
+        audioMenu.pause();
         return;
     }
 
     if (playerHasWon()) {
         document.querySelector(".congratulations").style.display = "block";
+        audioMenu.pause();
         return;
     }
+
     updatePlayer($container, dt);
     updateLasers($container, dt);
     updateEnemies($container, dt);
@@ -222,6 +226,7 @@ function updateEnemyLasers($container, dt) {
         if (rectsIntersect(r1, r2)) {
             //Player was hit
             destroyPlayer($container, player);
+            audioMenu.pause();
             break;
         }
     }
@@ -336,6 +341,8 @@ function onKeyUp(e) {
 
 
 main();
+
+
 //I listening the keys if the user are presdsing any keys of movement
 window.addEventListener("keydown", onKeyDown);
 window.addEventListener("keyup", onKeyUp);
