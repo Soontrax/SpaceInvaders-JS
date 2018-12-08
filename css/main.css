@@ -18,21 +18,15 @@ header {
   padding: 10px;
 }
 
-#conf{
-  position: absolute;
-  width: 60px;
-  right: 470px;
-  top: 200px;
-  cursor: pointer;
-}
-
 .game-wrapper {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   background: #222;
+  position: relative;
 }
+
 .game {
   width: 1000px;
   height: 600px;
@@ -76,10 +70,31 @@ header {
   height: 30px;
 }
 
+#ranking{
+  color :white;
+  position: absolute;
+  right: 200px;
+  top: 150px;
+  display: flex;
+  flex-direction: column;
+}
+
 .congratulations {
   display: none;
   position: absolute;
   background: green;
+  color: white;
+  padding: 20px 50px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  text-align: center;
+  animation: pop-in 1s;
+}
+
+.input-user {
+  display: none;
+  position: absolute;
+  background: #6b1818;
   color: white;
   padding: 20px 50px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -98,37 +113,6 @@ header {
   border-radius: 10px;
   text-align: center;
   animation: pop-in 1s;
-}
-
-#configuration{
-  display: none;
-  position: absolute;
-  background: #6b1818;
-  color: white;
-  padding: 20px 50px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  text-align: center;
-  animation: pop-in 1s;
-}
-
-button#mute{
-  background: url(../img/icon-mute.png) no-repeat;
-  border: none;
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
-}
-
-button#close{
-  background: url(../img/icon-close.png) no-repeat;
-  border: none;
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
-  right: 0;
-  top: 0;
-  position: absolute;
 }
 
 

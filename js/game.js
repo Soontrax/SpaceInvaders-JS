@@ -9,11 +9,11 @@ const GAME_HEIGHT = 600;
 
 //CONSTANT POSITION OF THE PLAYER TO PREVENT THE USER CANT EXCEED THE LIMIT OF THE WIDTH OF THE SCREEN
 const PLAYER_WIDTH = 20;
-const PLAYER_MAX_SPEED = 800;
+var PLAYER_MAX_SPEED = 800;
 
-const LASER_MAX_SPEED = 800;
+var LASER_MAX_SPEED = 500;
 //With this paramentre we can change the velocity of shoot
-const LASER_COOLDOWN = 0.1;
+var LASER_COOLDOWN = 0.5;
 
 //This part is for the enemies
 const ENEMIES_PER_ROW = 10;
@@ -22,7 +22,8 @@ const ENEMIES_VERTICAL_PADDING = 70;
 const ENEMIES_VERTICAL_SPACING = 80;
 const ENEMY_COOLDOWN = 4.0;
 
-var enemyHit = 0;
+var contador_enemigos = 0;
+ememigos = document.getElementById("enemies_destroyed");
 
 //Functionalities for configurations
 
@@ -39,6 +40,24 @@ const GAME_STATE = {
     enemyLasers: [],
     gameOver: false,
 };
+contador_seg = 0;
+contador_min = 0;
+minutos = document.getElementById("minutos");
+segundos = document.getElementById("segundos");
+var tiempo = setInterval(function () {
+    if (contador_seg == 60) {
+        contador_seg = 0;
+        contador_min++;
+        minutos.innerHTML = contador_min;
+        if (contador_min == 60) {
+            contador_min = 0;
+        }
+    }
+    segundos.innerHTML = contador_seg;
+    contador_seg++;
+
+}, 1000);
+
 
 const audioMenu = new Audio();
 audioMenu.src = "audio/music.mp3";
@@ -53,34 +72,6 @@ function rectsIntersect(r1, r2) {
 }
 
 function main() {
-    mutebutton = document.getElementById("mute");
-    closebutton = document.getElementById("close");
-    configurationbutton = document.getElementById("conf");
-
-    mutebutton.addEventListener("click", muteMusic);
-    closebutton.addEventListener("click", closeWindow);
-    configurationbutton.addEventListener("click", showConfiguration);
-
-    function muteMusic() {
-        if (audio.muted) {
-            audio.muted = false;
-            mutebutton.style.background = "url(img/icon-voice.png) no-repeat";
-        } else {
-            audio.muted = true;
-            mutebutton.style.background = "url(img/icon-mute.png) no-repeat";
-        }
-    }
-    var verification = 1;
-    function closeWindow() {
-        if (verification == 1) {
-            document.getElementById("configuration").style.display = "none";
-        }
-    }
-
-    function showConfiguration() {
-        document.getElementById("configuration").style.display = "block";
-    }
-    //Audio
     const $container = document.querySelector(".game");
     createPlayer($container);
 
@@ -114,12 +105,14 @@ function updateGAME() {
     if (GAME_STATE.gameOver) {
         document.querySelector(".game-over").style.display = "block";
         audioMenu.pause();
+        clearInterval(tiempo);
         return;
     }
 
     if (playerHasWon()) {
         document.querySelector(".congratulations").style.display = "block";
         audioMenu.pause();
+        clearInterval(tiempo);
         return;
     }
 
@@ -145,7 +138,11 @@ function updateLasers($container, dt) {
         const enemies = GAME_STATE.enemies;
         for (let index = 0; index < enemies.length; index++) {
             const enemy = enemies[index];
-            if (enemy.isDead) continue;
+            if (enemy.isDead) {
+                contador_enemigos++;
+                ememigos.innerHTML = contador_enemigos;
+                continue;
+            };
             const r2 = enemy.$element.getBoundingClientRect();
             if (rectsIntersect(r1, r2)) {
                 //Enemy was hit
@@ -337,9 +334,6 @@ function onKeyUp(e) {
         GAME_STATE.spacePressed = false;
     }
 }
-
-
-
 main();
 
 

@@ -10,16 +10,20 @@
 
 <body>
   <div class="wrap">
-    <header>Developed by: @Soontrax</header>
+    <header>Developed by: Alvaro Garrido--@Soontrax</header>
     <div class="game-wrapper">
       <div class="game"></div>
-      <img id="conf" src="img/configuration.png">
-      <div id="configuration">
-        <h1>Here tou can configurate ALL</h1>
-        <button id="mute">
-        </button>
-        <button id="close">
-        </button>
+      <div class="input-user">
+        <form>
+          <h2>Username:</h2>
+          <input type="text" placeholder="put your name">
+        </form>
+      </div>
+
+      <div id="ranking">
+        <h2><u>Ranking of the users</u></h2>
+        <b>Spent time: <span id="minutos">0</span>min:<span id="segundos"></span>seg</b>
+        <b>Enemies destroyed: <span id="enemies_destroyed"></span></b>
       </div>
       <div class="congratulations">
         <h1>Congratulations!</h1>
