@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Ranking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/ranking.css" />
+</head>
+
+<body>
+    <div id="main">
+        <div id="ranking">
+            <h1>Ranking</h1>
+            <img id="copa" src="img/copa1.png">
+
+            <script type="text/javascript">
+
+
+                function getCookie(name) {
+                    var re = new RegExp(name + "=([^;]+)");
+                    var value = re.exec(document.cookie);
+                    return (value != null) ? unescape(value[1]) : null;
+                }
+            </script>
+
+            <h2>Nivel 1</h2>
+
+            <ul>
+                <li>Enemigos muertos:
+                    <script type="text/javascript">document.write(getCookie("Enemigos muertos"));</script>
+                </li>
+                <li>Minutos aguantados:
+                    <script type="text/javascript">document.write(getCookie("Minutos aguantados"));</script>
+                </li>
+
+                <li>Segundos aguantados:
+                    <script type="text/javascript">document.write(getCookie("Segundos aguantados"));</script>
+                </li>
+            </ul>
+
+            <h2>Nivel 2</h2>
+
+            <ul>
+                <li>Enemigos muertos:
+                    <script type="text/javascript">document.write(getCookie("Enemigos muertos2"));</script>
+                </li>
+                <li>Minutos aguantados:
+                    <script type="text/javascript">document.write(getCookie("Minutos aguantados2"));</script>
+                </li>
+
+                <li>Segundos aguantados:
+                    <script type="text/javascript">document.write(getCookie("Segundos aguantados2"));</script>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</body>
+
+<script>
+</script>
+
+</html>
